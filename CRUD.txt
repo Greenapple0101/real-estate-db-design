@@ -1,0 +1,156 @@
+
+DROP DATABASE IF EXISTS project;
+CREATE DATABASE project;
+USE project;
+
+-- 테이블 생성
+CREATE TABLE Address (
+    address_id INT PRIMARY KEY,
+    street VARCHAR(100),
+    city VARCHAR(100),
+    district VARCHAR(100)
+);
+
+CREATE TABLE Buyer (
+    buyer_id INT PRIMARY KEY,
+    buyer_name VARCHAR(100),
+    buyer_contact VARCHAR(100)
+);
+
+CREATE TABLE Seller (
+    seller_id INT PRIMARY KEY,
+    seller_name VARCHAR(100),
+    seller_contact VARCHAR(100)
+);
+
+CREATE TABLE Property (
+    property_id INT PRIMARY KEY,
+    address_id INT,
+    seller_id INT,
+    property_price DECIMAL(15, 2),
+    property_bathroom INT,
+    property_bedroom INT,
+    property_area DECIMAL(15, 2),
+    school_district VARCHAR(100),
+    FOREIGN KEY (address_id) REFERENCES Address(address_id),
+    FOREIGN KEY (seller_id) REFERENCES Seller(seller_id)
+);
+
+CREATE TABLE Sale (
+    sale_id INT PRIMARY KEY,
+    property_id INT,
+    buyer_id INT,
+    seller_id INT,
+    address_id INT,
+    agent_id INT,
+    sale_price DECIMAL(15, 2),
+    sale_date DATE,
+    FOREIGN KEY (property_id) REFERENCES Property(property_id),
+    FOREIGN KEY (buyer_id) REFERENCES Buyer(buyer_id),
+    FOREIGN KEY (seller_id) REFERENCES Seller(seller_id),
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
+);
+
+CREATE TABLE Agent (
+    agent_id INT PRIMARY KEY,
+    agent_name VARCHAR(100),
+    agent_contact VARCHAR(100)
+);
+
+CREATE TABLE Photo (
+    photo_id INT PRIMARY KEY,
+    property_id INT,
+    type VARCHAR(50),
+    image BLOB,
+    description VARCHAR(255),
+    FOREIGN KEY (property_id) REFERENCES Property(property_id)
+);
+
+-- 데이터 삽입
+INSERT INTO Address (address_id, street, city, district) VALUES 
+(1, '123 Main St', 'Seoul', 'Mapo'),
+(2, '456 Market St', 'Seoul', 'Jongno'),
+(3, '789 Broadway', 'New York', 'Manhattan'),
+(4, '101 High St', 'London', 'Westminster'),
+(5, '234 Elm St', 'Seoul', 'Mapo'),
+(6, '567 Oak St', 'Seoul', 'Mapo'),
+(7, '890 Pine St', 'Seoul', 'Mapo');
+
+INSERT INTO Buyer (buyer_id, buyer_name, buyer_contact) VALUES
+(1, 'Hong GilDong', '010-1234-5678'),
+(2, 'Kim Euna', '010-2345-6789'),
+(3, 'Jason Momoa', '010-3456-7890'),
+(4, 'Kim Jenny', '010-4567-8901'),
+(5, 'John Doe', '010-5678-9012');
+
+INSERT INTO Seller (seller_id, seller_name, seller_contact) VALUES
+(1, 'Lee SunShin', '010-5678-9012'),
+(2, 'David Kim', '010-6789-0123'),
+(3, 'Harry Potter', '010-7890-1234'),
+(4, 'Son HeungMin', '010-8901-2345'),
+(5, 'Chris Evans', '010-9012-3456');
+
+INSERT INTO Property (property_id, address_id, seller_id, property_price, property_bathroom, property_bedroom, property_area, school_district) VALUES
+(1, 1, 1, 1000000000, 2, 5, 120.00, '8th'),
+(2, 2, 2, 1500000000, 3, 4, 150.00, '2th'),
+(3, 3, 3, 2000000000, 4, 5, 200.00, '3th'),
+(4, 4, 4, 2500000000, 5, 6, 300.00, '4th'),
+(5, 5, 1, 1200000000, 2, 3, 140.00, '8th'),
+(6, 6, 1, 1300000000, 4, 4, 160.00, '8th'),  
+(7, 7, 2, 1400000000, 3, 4, 180.00, '8th');  
+
+INSERT INTO Sale (sale_id, property_id, buyer_id, seller_id, address_id, agent_id, sale_price, sale_date) VALUES
+(1, 1, 1, 1, 1, 1, 1000000000.00, '2022-01-01'),
+(2, 2, 2, 2, 2, 2, 1500000000.00, '2022-02-01'),
+(3, 3, 3, 3, 3, 3, 2000000000.00, '2023-03-01'),
+(4, 4, 4, 4, 4, 4, 2500000000.00, '2023-04-01'),
+(5, 5, 5, 5, 5, 5, 1200000000.00, '2021-05-01'),
+(6, 6, 2, 1, 1, 1, 1300000000.00, '2021-06-01'),
+(7, 7, 1, 2, 2, 2, 1400000000.00, '2022-07-01');
+
+INSERT INTO Agent (agent_id, agent_name, agent_contact) VALUES
+(1, 'Alice Johnson', '010-1111-2222'),
+(2, 'Bob Smith', '010-2222-3333'),
+(3, 'Charlie Brown', '010-3333-4444'),
+(4, 'Diana Prince', '010-4444-5555'),
+(5, 'Eve Adams', '010-5555-6666');
+
+INSERT INTO Photo (photo_id, property_id, type, image, description) VALUES
+(1, 1, 'interior', NULL, 'Living room'),
+(2, 2, 'exterior', NULL, 'Front view'),
+(3, 3, 'interior', NULL, 'Kitchen'),
+(4, 4, 'exterior', NULL, 'Backyard'),
+(5, 5, 'interior', NULL, 'Bedroom');
+
+-- Add the list_date column to the Property table
+ALTER TABLE Property ADD COLUMN list_date DATE;
+
+-- Property list_date 업데이트
+UPDATE Property SET list_date = '2021-01-01' WHERE property_id = 1;
+UPDATE Property SET list_date = '2021-06-01' WHERE property_id = 2;
+UPDATE Property SET list_date = '2021-09-01' WHERE property_id = 3;
+UPDATE Property SET list_date = '2022-01-01' WHERE property_id = 4;
+UPDATE Property SET list_date = '2022-03-01' WHERE property_id = 5;
+UPDATE Property SET list_date = '2022-05-01' WHERE property_id = 6;
+UPDATE Property SET list_date = '2022-07-01' WHERE property_id = 7;
+
+-- Sale sale_date 업데이트
+UPDATE Sale SET sale_date = '2022-01-01' WHERE sale_id = 1;
+UPDATE Sale SET sale_date = '2022-03-01' WHERE sale_id = 2;
+UPDATE Sale SET sale_date = '2022-05-01' WHERE sale_id = 3;
+UPDATE Sale SET sale_date = '2022-07-01' WHERE sale_id = 4;
+UPDATE Sale SET sale_date = '2022-09-01' WHERE sale_id = 5;
+
+ALTER TABLE Property ADD COLUMN type VARCHAR(50);
+
+UPDATE Property SET type = 'studio' WHERE property_id = 1;
+UPDATE Property SET type = 'one-bedroom' WHERE property_id = 2;
+UPDATE Property SET type = 'multi-bedroom' WHERE property_id = 3;
+UPDATE Property SET type = 'detached house' WHERE property_id = 4;
+UPDATE Property SET type = 'one-bedroom' WHERE property_id = 5;
+UPDATE Property SET type = 'studio' WHERE property_id = 6;
+UPDATE Property SET type = 'multi-bedroom' WHERE property_id = 7;
+
+ALTER TABLE Property ADD COLUMN status VARCHAR(20) DEFAULT 'available';
+ALTER TABLE Sale MODIFY sale_id INT AUTO_INCREMENT;
+ALTER TABLE Agent MODIFY agent_id INT AUTO_INCREMENT;
